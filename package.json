@@ -1,0 +1,47 @@
+{
+  "name": "@jcc/express-mvc",
+  "version": "1.0.0",
+  "description": "express mvc",
+  "bin": "./bin/cli/js",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server",
+    "watch": "npx tailwindcss -i ./public/css/app.css -o  ./resources/css/main.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "app-root-path": "^3.1.0",
+    "bcryptjs": "^2.4.3",
+    "browser-refresh": "^1.7.3",
+    "colors": "^1.4.0",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.1.5",
+    "express-session": "^1.17.3",
+    "hbs": "^4.2.0",
+    "helmet": "^7.1.0",
+    "hpp": "^0.2.3",
+    "jcc-express-mvc": "^1.0.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.3",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "socket.io": "^4.7.2",
+    "validator": "^13.11.0",
+    "xss-clean": "^0.1.4"
+  },
+  "nodemonConfig": {
+    "ext": "js,json,hbs,html,css"
+  },
+  "devDependencies": {
+    "dotenv": "^16.3.1",
+    "nodemon": "^3.0.2",
+    "tailwindcss": "^3.4.0"
+  }
+}
