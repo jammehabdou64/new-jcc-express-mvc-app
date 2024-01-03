@@ -48,39 +48,43 @@ npm run dev
 
 ## Project Structure
 
-project-root/
-|--app
-||--Config/
-|||--cors/
-||||--cors.js
-||||--socket.js
-|||--egine.js
-||--Controllers/
-|||--UsersController.js
-||--Models/
-|||--User.js
-||--Middlewares/
-|||--app.js
-||--Request/
-|||--UserRequest.js
-|--public/
-||--css/
-|||--app.css
-||--js/
-|||--app.js
-|--resources/
-||--views/
-|||--partials/
-||||--header.js
-|||--layout.hbs
-|||--index.hbs
-|--routes/
-||--index.js
+- project-root/
+- |--app
+- ||--Config/
+- |||--cors/
+- ||||--cors.js
+- ||||--socket.js
+- |||--egine.js
+- ||--Controllers/
+- |||--UsersController.js
+- ||--Models/
+- |||--User.js
+- ||--Middlewares/
+- |||--app.js
+- ||--Request/
+- |||--UserRequest.js
+- |--public/
+- ||--css/
+- |||--app.css
+- ||--js/
+- |||--app.js
+- |--resources/
+- ||--views/
+- |||--partials/
+- ||||--header.js
+- |||--layout.hbs
+- |||--index.hbs
+- |--routes/
+- ||--index.js
 
-`Config/`:Configuration files for the application.
-`Controllers/`:Controllers handling the application logic.
-`Models/`:Mongoose for database interactions.
-`public/`:Static assets like CSS and JavaScript files.
-`routes/`: Single route file (index.js) where all routes are registered.
-`views/`: Handlebars templates for rendering views.
-`server.js`: Main application file.
+- `Config/`:Configuration files for the application.
+- `Controllers/`:Controllers handling the application logic.
+- `Models/`:Mongoose for database interactions.
+- `public/`:Static assets like CSS and JavaScript files.
+- `routes/`: Single route file (index.js) where all routes are registered.
+- `views/`: Handlebars templates for rendering views.
+- `server.js`: Main application file.
+
+## Configuration
+
+Explain any configuration options or environment variables that can be set for customization.
