@@ -48,60 +48,36 @@ npm run dev
 
 ## Project Structure
 
+```bash
 project-root/
 |--app
-
 | |--Config/
-
 | | |--cors/
-
 | | | |--cors.js
-
 | | | |--socket.js
-
 | | |--egine.js
-
 | |--Controllers/
-
 | | |--UsersController.js
-
 | |--Models/
-
 | | |--User.js
-
 | |--Middlewares/
-
 | | |--app.js
-
 | |--Request/
-
 | | |--UserRequest.js
-
 |--public/
-
 | |--css/
-
 | | |--app.css
-
 | |--js/
-
 | | |--app.js
-
 |--resources/
-
 | |--views/
-
 | | |--partials/
-
 | | | |--header.js
-
 | | |--layout.hbs
-
 | | |--index.hbs
-
 |--routes/
-
 | |--index.js
+```
 
 - `Config/`:Configuration files for the application.
 - `Controllers/`:Controllers handling the application logic.
