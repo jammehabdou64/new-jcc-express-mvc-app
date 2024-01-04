@@ -46,6 +46,36 @@ Start the application:
 npm run dev
 ```
 
+To generate a controller:
+
+```bash
+node jcc make:controller UsersController
+```
+
+To generate a model:
+
+```bash
+node jcc make:model User
+```
+
+To generate a request:
+
+```bash
+node jcc make:request UserRequest
+```
+
+To generate a controller and model:
+
+```bash
+node jcc make:controller UsersController User '--resources'
+```
+
+Or
+
+```bash
+node jcc make:controller UsersController User '-r'
+```
+
 ## Project Structure
 
 ```bash
