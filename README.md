@@ -67,13 +67,13 @@ node jcc make:request UserRequest
 To generate a controller and model:
 
 ```bash
-node jcc make:controller UsersController User '--resources'
+node jcc make:controller UsersController User --resources
 ```
 
 Or
 
 ```bash
-node jcc make:controller UsersController User '-r'
+node jcc make:controller UsersController User -r
 ```
 
 ## Project Structure
