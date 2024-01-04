@@ -117,6 +117,93 @@ project-root/
 - `views/`: Handlebars templates for rendering views.
 - `server.js`: Main application file.
 
+## Basic Routing
+
+Basic routing is meant to route your request to an appropriate controller. The routes of the application can be defined in route/index.js file. Here is the general route syntax for each of the possible request.
+
+```js
+const { Route, getController } = require("jcc-express-mvc");
+const UsersController = getController("UsersController");
+
+Route.get("/", (req, res, next) => {
+  return res.json({ message: "Hello, World" });
+});
+
+Route.post("/", (req, res, next) => {
+  //
+});
+
+Route.patch("/:id", (req, res, next) => {
+  return res.json({ id: req.params.id });
+});
+
+Route.put("/:id", (req, res, next) => {
+  return res.json({ id: req.params.id });
+});
+
+Route.delete("/", (req, res, next) => {
+  //
+});
+
+Route.prefix("/users").group((Route) => {
+  Route.get("/", UsersController.index);
+  Route.get("/create", UsersController.create);
+  Route.post("/", UsersController.store);
+  Route.get("/:id", UsersController.show);
+  Route.patch("/:id", UsersController.edit);
+  Route.delete("/:id", UsersController.destroy);
+});
+
+Route.prefix("/users")
+  .controller(UsersController)
+  .group((Route) => {
+    Route.get("/", "index");
+    Route.get("/create", "create");
+    Route.post("/", "store");
+    Route.get("/:id", "show");
+    Route.patch("/:id", "edit");
+    Route.delete("/:id", "destroy");
+  });
+```
+
+## Controller
+
+```js
+class AuthController {
+  async index(req, res, next) {
+    return res.render("auth/register");
+  }
+
+  loginView(req, res) {
+    return res.render("auth/login");
+  }
+
+  async login(req, res, next) {
+    const vdData = await req.validate({
+      email: ["required"],
+      password: ["required"],
+    });
+    return vdData.errors
+      ? res.redirect("/login")
+      : Auth.attempt(req, res, next);
+  }
+
+  async store(req, res, next) {
+    const validatedData = await req.validate({
+      name: ["required"],
+      email: ["email", "unique:user"],
+      password: ["min:6"],
+    });
+
+    validatedData["password"] = await bcrypt(validatedData["password"]);
+    const result = await User.create(validatedData);
+    return result ? Auth.attempt(req, res, next) : res.redirect("/register");
+  }
+}
+```
+## Validation
+
+
 ## Configuration
 
 Explain any configuration options or environment variables that can be set for customization.
