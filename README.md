@@ -235,7 +235,7 @@ module.exports = new UsersController();
 
 ## Validation
 
-cc-express-mvc comes built-in validation rules. Enabling you to ensure that the data submitted by users is valid before further processing.
+jcc-express-mvc comes built-in validation rules. Enabling you to ensure that the data submitted by users is valid before further processing.
 
 ```js
 class UsersController {
@@ -292,7 +292,7 @@ Custom requests (or Form Requests) are useful in situations when one wants to au
 ### example
 
 ```js
-const { getModel, FormRequest,bcrypt } = require("jcc-express-mvc");
+const { getModel, FormRequest, bcrypt } = require("jcc-express-mvc");
 const User = getModel("User");
 
 class UserRequest extends FormRequest {
@@ -300,7 +300,7 @@ class UserRequest extends FormRequest {
     super(req);
   }
 
-  rules() {
+  async rules() {
     return this.validate({
       name: ["required"],
       email: [
@@ -312,14 +312,17 @@ class UserRequest extends FormRequest {
     });
   }
 
-  save(){
-    await this.rules()
+  async save() {
+    await this.rules();
 
-    const user = new User()
-    user.name  = this.name
-    user.email = this.email
-    user.password = await bcrypt(this.password)
-    return user.save()
+    const user = this.route("user")
+      ? await User.findById(this.route("user"))
+      : new User();
+
+    user.name = this.name;
+    user.email = this.email;
+    user.password = await bcrypt(this.password);
+    return user.save();
   }
 }
 ```
