@@ -1,0 +1,69 @@
+@extends("layout.app") @section("title","Register") @section("content")
+@include("partials.header")
+
+<div class="w-full flex h-full items-center justify-center">
+  <form
+    action="/auth/register"
+    class="w-11/12 sm:w-[450px] py-2 px-6 bg-white"
+    method="post"
+  >
+    <h2 class="text-center font-extrabold text-xl my-2 py-2">Register</h2>
+    <div class="flex-col mt-1 flex">
+      <label for="email" class="text-gray-800">Name</label>
+      <input
+        type="name"
+        placeholder="name"
+        class="outline-none border border-gray-400 mt-1 px-3 py-2 @if(errors.name) border-red-500 @else border-green-600 @endif"
+        id="name"
+        name="name"
+        value="{{old.name}}"
+      />
+      <small
+        class="@if(errors.name) text-red-500 text-xs mx-2 @else hidden @endif"
+        >{{errors.name}}</small
+      >
+    </div>
+    <div class="flex-col mt-1 flex">
+      <label for="email" class="text-gray-800">Email</label>
+      <input
+        type="email"
+        placeholder="email"
+        class="outline-none border mt-1 px-3 py-2 @if(errors.email) border-red-500 @else border-gray-400 @endif"
+        id="email"
+        name="email"
+        value="{{old.email}}"
+      />
+      <small
+        class="@if(errors.email) text-red-500 text-xs mx-2 @else hidden @endif"
+        >{{errors.email}}</small
+      >
+    </div>
+    <div class="flex-col mt-4 flex">
+      <label for="password" class="text-gray-800">Password</label>
+      <input
+        type="password"
+        placeholder="password"
+        class="outline-none border mt-1 px-3 py-2 @if(errors.name) border-red-500 @else border-gray-400 @endif"
+        id="password"
+        name="password"
+        value=""
+      />
+      <small
+        class="@if(errors.password) text-red-500 text-xs mx-2 @else hidden @endif"
+        >{{errors.password}}</small
+      >
+    </div>
+    <div class="py-2 mt-3">
+      <button type="submit" class="bg-orange-500 p-2 w-full text-white">
+        login
+      </button>
+    </div>
+    <div class="mb-2 py-3">
+      <p class="text-sm">
+        Already have an account?
+        <a href="/login" class="text-orange-500 underline">login</a>
+      </p>
+    </div>
+  </form>
+</div>
+@endsection

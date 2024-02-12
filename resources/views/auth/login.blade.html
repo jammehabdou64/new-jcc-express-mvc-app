@@ -1,6 +1,6 @@
-{{> header}}
-<div class="h-full w-full  flex items-center justify-center">
-
+@extends("layout.app") @section("title","Login") @section("content")
+@include("partials.header")
+<div class="h-full w-full flex items-center justify-center">
   <form
     action="/auth/login"
     class="w-11/12 sm:w-[450px] py-2 px-6 bg-white"
@@ -13,13 +13,14 @@
       <input
         type="email"
         placeholder="email"
-        class="outline-none border  mt-1 px-3 py-2 {{#if errors.email}} border-red-500 {{else}} border-gray-400 {{/if}}"
+        class="outline-none border mt-1 px-3 py-2"
         id="email"
         name="email"
         value="{{old.email}}"
       />
-      <small class="{{#if errors.email}} text-red-500 text-xs mx-2 {{else}} hidden {{/if}}">{{errors.email}}</small>
-      <small class="{{#if error.email}} text-red-500 text-xs mx-2 {{else}} hidden {{/if}}">{{error.email}}</small>
+      <small class="@ternary(error.email ?text-red-500 text-xs mx-2 :hidden)"
+        >{{error.email}}</small
+      >
     </div>
     <div class="flex-col mt-4 flex">
       <label for="password" class="text-gray-800">Password</label>
@@ -30,21 +31,25 @@
         id="password"
         name="password"
       />
-            <small class="{{#if errors.password}} text-red-500 text-xs mx-2{{else}} hidden {{/if}}">{{errors.password}}</small>
-
+      <small
+        class="@if(errors.password) text-red-500 text-xs mx-2 @else hidden @endif"
+        >{{errors.password}}</small
+      >
     </div>
     <div class="my-2">
       <a href="#" class="text-orange-500">forgetten password</a>
     </div>
     <div>
-      <button
-        type="submit"
-        class="bg-orange-500 p-2 w-full text-white"
-      >login</button>
+      <button type="submit" class="bg-orange-500 p-2 w-full text-white">
+        login
+      </button>
     </div>
     <div class="mb-2 py-3">
-      <p class="text-sm">Don't have an account?
-        <a href="/register" class="text-orange-500 underline">register</a></p>
+      <p class="text-sm">
+        Don't have an account?
+        <a href="/register" class="text-orange-500 underline">register</a>
+      </p>
     </div>
   </form>
 </div>
+@endsection
