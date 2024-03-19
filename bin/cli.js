@@ -28,7 +28,9 @@ const installDep = runCommand(installDepsCommand);
 
 if (!installDep) process.exit(-1);
 
-const createEnvFile = runCommand(`cd ${repoName} && cp .env.example .env`);
-if (!createEnvFile) process.exit(-1);
+const createEnv = runCommand(`cd ${repoName} && cp .env.example .env`);
+if (!createEnv) process.exit(-1);
 console.log("Congradulation you are now ready.");
 console.log(`cd ${repoName}`);
+console.log("start server");
+console.log("npm run dev");
