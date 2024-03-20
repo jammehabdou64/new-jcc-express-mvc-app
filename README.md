@@ -181,6 +181,18 @@ Route.prefix("/users")
 
 ## Controller
 
+The controller UsersController contains methods to handle various user-related actions.
+
+Methods
+
+- create(req, res, next): Renders the view for creating a new user.
+- index(req, res, next): Retrieves all users from the database and renders the user index view.
+- store(req, res, next): Placeholder method for storing user data.
+- show(req, res, next): Renders the view for displaying a specific user.
+- edit(req, res, next): Placeholder method for updating user data.
+- destroy(req, res, next): Placeholder method for deleting a user.
+  These methods encapsulate the logic for handling different user-related operations within the application.
+
 ```js
 const { getModel } = require("jcc-express-mvc");
 const User = getModel("User");
