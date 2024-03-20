@@ -1,3 +1,7 @@
+## Warning
+
+**Note: This package is not recommended for use in production environments. It's intended for learning purposes only. Use in production at your own risk.**
+
 ## jcc-express-starter
 
 jcc-express-mvc is a lightweight Node.js package that simplifies the development of Express.js applications using a structure inspired by Laravel's file organization. It encourages the use of the Model-View-Controller (MVC) architectural pattern, providing a clean and organized approach to building and scaling your Express.js projects.
@@ -6,9 +10,9 @@ jcc-express-mvc is a lightweight Node.js package that simplifies the development
 
 - Sets up an Express.js web application with MVC architecturevalidation for form data
 - Opinionated project structure for organized code
-- Built-in
-- Single route file for easy route management
-- Comes with Handlebars for view rendering
+- Built-in validation methods
+- Two routes file for easy route management
+- Comes with jsBlade similar to laravel blade for view rendering, But you can use any templating engine of choice.
 - Includes configuration with MongoDB
 - Includes configuration with dotenv
 
@@ -34,12 +38,6 @@ Navigate to the newly created directory:
 cd my-express-app
 ```
 
-Run this command to create an env file.
-
-```bash
-cp .env.example .env
-```
-
 Start the application:
 
 ```bash
@@ -50,6 +48,12 @@ To generate a controller class:
 
 ```bash
 node jcc make:controller UsersController
+```
+
+To generate a api controller class:
+
+```bash
+node jcc make:ApiController UsersController
 ```
 
 To generate a model:
@@ -94,6 +98,8 @@ project-root/
 | | |--app.js
 | |--Request/
 | | |--UserRequest.js
+|--bootstrap
+| |-app.js
 |--public/
 | |--css/
 | | |--app.css
@@ -106,20 +112,23 @@ project-root/
 | | |--layout.hbs
 | | |--index.hbs
 |--routes/
-| |--index.js
+| |--web.js
+| |--api.js
+
 ```
 
 - `Config/`:Configuration files for the application.
 - `Controllers/`:Controllers handling the application logic.
 - `Models/`:Mongoose for database interactions.
 - `public/`:Static assets like CSS and JavaScript files.
-- `routes/`: Single route file (index.js) where all routes are registered.
-- `resources/views/`: Handlebars templates for rendering views.
+- `routes/`: Two routes file (web.js | api.js) where routes are registered.
+- `resources/views/`: jsBlade templates for rendering views.
 - `server.js`: Main application file.
+- `bootstrap/app.js`:Global middlewares
 
 ## Routing and Middleware
 
-Basic routing is meant to route your request to an appropriate controller. The routes of the application can be defined in route/index.js file. Here is the general route syntax for each of the possible request. You can define the URLs of your application with the help of routes. These routes can contain variable data, connect to controllers or can be wrapped into middlewares.
+Basic routing is meant to route your request to an appropriate controller. The routes of the application can be defined in route/web.js or route/api.js file. Here is the general route syntax for each of the possible request. You can define the URLs of your application with the help of routes. These routes can contain variable data, connect to controllers or can be wrapped into middlewares.
 
 ```js
 const { Route, getController, authenticated } = require("jcc-express-mvc");
@@ -347,7 +356,7 @@ In jcc-express-mvc, the errors variable in the view file holds all the validatio
       value="{{old.name}}"
     />
     <small
-      class="{{#if errors.name}} text-red-500 text-xs mx-2{{else}} hidden {{/if}}"
+      class="@if(errors.name) text-red-500 text-xs mx-2 @else hidden @endif
       >{{errors.name}}</small
     >
   </div>
@@ -362,7 +371,7 @@ In jcc-express-mvc, the errors variable in the view file holds all the validatio
       value="{{old.email}}"
     />
     <small
-      class="{{#if errors.email}} text-red-500 text-xs mx-2{{else}} hidden {{/if}}"
+      class="@if(errors.email) text-red-500 text-xs mx-2 @else hidden @endif"
       >{{errors.email}}</small
     >
   </div>
@@ -377,7 +386,7 @@ In jcc-express-mvc, the errors variable in the view file holds all the validatio
       value=""
     />
     <small
-      class="{{#if errors.password}} text-red-500 text-xs mx-2{{else}} hidden {{/if}}"
+      class="@if(errors.password) text-red-500 text-xs mx-2 @else hidden @endif"
       >{{errors.password}}</small
     >
   </div>
@@ -395,6 +404,38 @@ In jcc-express-mvc, the errors variable in the view file holds all the validatio
 </form>
 ```
 
-## Configuration
+## Templating Engine
 
-Explain any configuration options or environment variables that can be set for customization.
+`jcc-express-starter` allows you to use any templating engine of your choice for rendering views. The package comes pre-configured with jsBlade, which is similar to Laravel's Blade templating engine. However, you can easily switch to another templating engine by configuring it in the `app/Config/engine.js` file.
+
+### Configuring Templating Engine
+
+To configure a different templating engine, follow these steps:
+
+1. Navigate to the `app/Config` directory in your project.
+
+2. Open the `engine.js` file.
+
+3. Import the desired templating engine module. For example, if you want to use EJS, you can add the following line:
+   ```javascript
+   const ejs = require("ejs");
+   module.exports = (app) => {
+     app.set("view engine", "ejs");
+     return;
+   };
+   ```
+
+```
+
+Save the changes to the engine.js file.
+
+Now, your Express.js application will use the configured templating engine for rendering views.
+
+Available Templating Engines
+Here are a few popular templating engines that you can use with jcc-express-starter:
+
+ejs: Embedded JavaScript templates.
+pug: High-performance template engine heavily influenced by Haml.
+handlebars: Minimal templating on steroids.
+Feel free to choose the templating engine that best fits your project requirements and preferences.
+```
