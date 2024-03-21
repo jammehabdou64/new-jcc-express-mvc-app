@@ -428,7 +428,9 @@ To configure a different templating engine, follow these steps:
 
 2. Open the `engine.js` file.
 
-3. Import the desired templating engine module. For example, if you want to use EJS, you can add the following line:
+3. Mention .env File Configuration: Explain how users can enable the chosen templating engine by setting the TEMPLATE_ENGINE variable to true in the .env file.
+
+4. Import the desired templating engine module. For example, if you want to use EJS, you can add the following line:
    ```javascript
    const ejs = require("ejs");
    module.exports = (app) => {
@@ -450,4 +452,104 @@ ejs: Embedded JavaScript templates.
 pug: High-performance template engine heavily influenced by Haml.
 handlebars: Minimal templating on steroids.
 Feel free to choose the templating engine that best fits your project requirements and preferences.
+```
+
+## Helpers
+
+jcc-express-starter provides a set of helper functions to simplify common tasks in your Express.js applications:
+
+- **bcrypt**: A function for password hashing using bcrypt.
+
+  ```javascript
+  const { bcrypt } = require("jcc-express-mvc");
+  const hashPass = await bcrypt("123456");
+  // Example usage
+  ```
+
+- **verifyHash**: A function for verifying hashed passwords.
+
+  ```javascript
+  const { verifyHash } = require("jcc-express-mvc");
+  const isMatch = await verifyHash("password", hashedPassword);
+  // Example usage
+  ```
+
+- **authenticated**: A function for implementing Passport authentication.
+
+  ```javascript
+  const { Route, authenticated } = require("jcc-express-mvc");
+  Route.middleware(authenticated).get("/profile", (req, res) => {
+    //Access authenticated user's profile
+  });
+  ```
+
+- **apiAuthenticated**: A function for API JWT authentication.
+
+```javascript
+const { ApiRoute, apiAuthenticated } = require("jcc-express-mvc");
+
+// Example usage
+ApiRoute.middleware(apiAuthenticated).post("/api/data", (req, res) => {
+  // Access authenticated user's data
+});
+```
+
+**getModel**: A function to require a model file from the Models directory.
+
+```javascript
+const { getModel } = require("jcc-express-mvc");
+
+// Example usage
+const User = getModel("User");
+```
+
+**getController**: A function to require a controller file from the Controllers directory.
+
+```javascript
+const { Route, getController } = require("jcc-express-mvc");
+
+// Example usage
+const UsersController = getController("UsersController");
+
+Route.get("/", UsersController.index);
+```
+
+**getController**: A function to require a controller file from the Controllers directory.
+
+```javascript
+const { Route, getController } = require("jcc-express-mvc");
+
+// Example usage
+const UsersController = getController("UsersController");
+
+Route.get("/", UsersController.index);
+```
+
+**getApiController**: A function to require an API controller file from the API Controllers directory.
+
+```javascript
+const { ApiRoute, getApiController } = require("jcc-express-mvc");
+
+// Example usage
+const UsersController = getApiController("MessagesController");
+
+ApiRoute.get("/", MessagesController.index);
+```
+
+**getMiddleware**: A function to require a middleware file from the Middlewares directory.
+
+```javascript
+const { getMiddleware } = require("jcc-express-mvc");
+
+// Example usage
+const AuthMiddleware = getMiddleware("AuthMiddleware");
+```
+
+**getRequest**: A function to require a request file from the Request directory
+
+```javascript
+const { getRequest } = require("jcc-express-mvc");
+
+// Example usage
+const AuthRequest = getRequest("AuthRequest");
 ```
