@@ -514,17 +514,6 @@ const UsersController = getController("UsersController");
 Route.get("/", UsersController.index);
 ```
 
-**getController**: A function to require a controller file from the Controllers directory.
-
-```javascript
-const { Route, getController } = require("jcc-express-mvc");
-
-// Example usage
-const UsersController = getController("UsersController");
-
-Route.get("/", UsersController.index);
-```
-
 **getApiController**: A function to require an API controller file from the API Controllers directory.
 
 ```javascript
