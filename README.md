@@ -542,3 +542,85 @@ const { getRequest } = require("jcc-express-mvc");
 // Example usage
 const AuthRequest = getRequest("AuthRequest");
 ```
+
+## jsBlade Templating Engine
+
+jcc-express-starter supports the jsBlade templating engine, which provides directives similar to Laravel Blade. jsBlade allows you to write expressive and clean templates for rendering views in your Express.js applications.
+
+### Usage
+
+1. Create your view files with the .blade.html extension (or the extension specified in your template engine configuration).
+2. Use jsBlade directives in your view files to write dynamic and reusable templates.
+
+With jsBlade, you can create a flexible views for your Express.js applications, making it easier to build and maintain your frontend code.
+
+### Directives
+
+jsBlade provides several directives that you can use in your views:
+
+- **@if**, **@else**, **@endif**, **@ternary**: Conditional statements for rendering content based on conditions.
+
+  ```html
+  @if(condition)
+  <!-- Content to render if condition is true -->
+  @else
+  <!-- Content to render if condition is false -->
+  @endif
+
+  <!---->
+  @ternary(condition ?
+  <!--content-->
+  :<!--content-->)
+  ```
+
+**@foreach, @endforeach:** Looping through arrays.
+
+```html
+@foreach(array as item)
+<!-- Content to render for each item in the array -->
+@endforeach
+```
+
+**@include**: Including other view files within the current view..
+
+```html
+@include('partials.header')
+```
+
+**@extends, @section, @endsection:** Template inheritance for creating reusable layouts and sections.
+
+```html
+<!-- layout.app.blade.html -->
+@section('content')
+<!-- Content to render in the section -->
+@endsection
+
+<!-- index.blade.html -->
+@extends('layout') @section('content')
+<!-- Content specific to the index view -->
+@endsection
+```
+
+**@guest, @endguest, @auth, @endauth:** Authentication directives for displaying content based on the user's authentication status.
+
+```html
+@auth
+<!-- Content to render for authenticated users -->
+@endauth @guest
+<!-- Content to render for guests (unauthenticated users) -->
+@endguest
+```
+
+### Accessing Authenticated User
+
+You can access the authenticated user in your frontend engine using the `{{ Auth.name }}` syntax. This allows you to retrieve the name of the authenticated user directly in your views.
+
+For example, to display the name of the authenticated user in a welcome message:
+
+```html
+@if(Auth.name)
+<p>Welcome, {{ Auth.name }}!</p>
+@else
+<p>Welcome, Guest!</p>
+@endif
+```
