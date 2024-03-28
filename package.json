@@ -6,8 +6,6 @@
   "main": "index.js",
   "scripts": {
     "start": "node server",
-    "dev": "nodemon server",
-    "watch": "npx tailwindcss -i ./public/css/app.css -o  ./resources/css/main.css --watch"
   },
   "repository": {
     "type": "git",
@@ -16,38 +14,6 @@
   "keywords": [],
   "author": "Abdou Jammeh",
   "license": "ISC",
-  "dependencies": {
-    "app-root-path": "^3.1.0",
-    "bcryptjs": "^2.4.3",
-    "colors": "^1.4.0",
-    "connect-flash": "^0.1.1",
-    "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
-    "express": "^4.18.3",
-    "express-mongo-sanitize": "^2.2.0",
-    "express-rate-limit": "^7.2.0",
-    "express-session": "^1.18.0",
-    "hbs": "^4.2.0",
-    "helmet": "^7.1.0",
-    "hpp": "^0.2.3",
-    "jcc-express-mvc": "^1.1.5",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.2.2",
-    "passport": "^0.7.0",
-    "passport-local": "^1.0.0",
-    "socket.io": "^4.7.5",
-    "validator": "^13.11.0",
-    "xss-clean": "^0.1.4"
-  },
-  "nodemonConfig": {
-    "ext": "js,json,hbs,html"
-  },
-  "devDependencies": {
-    "dotenv": "^16.4.5",
-    "nodemon": "^3.1.0",
-    "prettier": "^3.2.5",
-    "prettier-plugin-blade": "^2.1.5",
-    "prettier-plugin-tailwindcss": "^0.5.11",
-    "tailwindcss": "^3.4.1"
-  }
+
+ 
 }
