@@ -108,9 +108,9 @@ project-root/
 |--resources/
 | |--views/
 | | |--partials/
-| | | |--header.js
-| | |--layout.hbs
-| | |--index.hbs
+| | | |--header.blade.html
+| | |--layout.blade.html
+| | |--index.blade.html
 |--routes/
 | |--web.js
 | |--api.js
@@ -150,8 +150,14 @@ Route.put("/:id", (req, res, next) => {
   return res.json({ id: req.params.id });
 });
 
-Route.delete("/", (req, res, next) => {
+Route.delete("/:id", (req, res, next) => {
   //
+});
+
+Route.get("/", [UsersController, "index"]);
+
+Route.get("/{name}", (req, res, next) => {
+  return res.json({ id: req.params.name });
 });
 
 Route.middleware(authenticated).get("/profile", (req, res, next) => {
@@ -173,10 +179,33 @@ Route.prefix("/users")
     Route.get("/", "index");
     Route.get("/create", "create");
     Route.post("/", "store");
-    Route.get("/:id", "show");
-    Route.patch("/:id", "edit");
-    Route.delete("/:id", "destroy");
+    Route.get("/{id}", "show");
+    Route.patch("/{id}", "edit");
+    Route.delete("/{id}", "destroy");
   });
+```
+
+## Routes Parameter
+
+In the `jcc-express-mvc` framework, routes often contain parameters that are dynamic values parsed from the URL path. These parameters are defined using placeholders in the route path and are accessible within route handlers via the `req.params` object.
+Routes parameters can be defined in route paths using placeholders indicated by : or {} followed by the parameter name.
+
+```js
+const { Route } = require("jcc-express-mvc");
+
+Route.get("/:id", (req, res) => {
+  console.log(req.params.id);
+});
+```
+
+or
+
+```js
+const { Route } = require("jcc-express-mvc");
+
+Route.get("/{id}", (req, res) => {
+  console.log(req.params.id);
+});
 ```
 
 ## Controller
@@ -348,7 +377,7 @@ class UserRequest extends FormRequest {
 }
 ```
 
-In jcc-express-mvc, the errors variable in the view file holds all the validation errors. To access errors for a specific field, use [errors.field].
+In jcc-express-mvc, the `errors` variable in the view file holds all the validation errors. To access errors for a specific field, use errors.field. Whereas the `old` variable holds all the input values.
 
 ```html
 <form
@@ -458,7 +487,7 @@ Feel free to choose the templating engine that best fits your project requiremen
 
 jcc-express-starter provides a set of helper functions to simplify common tasks in your Express.js applications:
 
-- **bcrypt**: A function for password hashing using bcrypt.
+- **bcrypt**: A async function for password hashing using bcrypt.
 
   ```javascript
   const { bcrypt } = require("jcc-express-mvc");
@@ -466,7 +495,7 @@ jcc-express-starter provides a set of helper functions to simplify common tasks 
   // Example usage
   ```
 
-- **verifyHash**: A function for verifying hashed passwords.
+- **verifyHash**: A async function for verifying hashed passwords.
 
   ```javascript
   const { verifyHash } = require("jcc-express-mvc");
@@ -520,7 +549,7 @@ Route.get("/", UsersController.index);
 const { ApiRoute, getApiController } = require("jcc-express-mvc");
 
 // Example usage
-const UsersController = getApiController("MessagesController");
+const MessagesController = getApiController("MessagesController");
 
 ApiRoute.get("/", MessagesController.index);
 ```
