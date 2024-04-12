@@ -285,7 +285,11 @@ module.exports = new UsersController();
 
 ## Validation
 
-jcc-express-mvc comes built-in validation rules. Enabling you to ensure that the data submitted by users is valid before further processing.
+The jcc-express-mvc framework comes with built-in validation rules that enable you to ensure the validity of data submitted by users before further processing. These validation rules can be applied either in web routes or API routes using the provided methods.
+
+#### Web Validation
+
+In web routes, you can use the `req.validate()` method to validate incoming data. Here's an example of how to use it:
 
 ```js
 class UsersController {
@@ -303,6 +307,27 @@ class UsersController {
 
     res.json({ validateData });
   }
+}
+```
+
+- `name`:Specifies the name of the field to be validated.
+- `required`: Ensures that the field is present and not empty.
+- `email`:Validates that the field is a valid email address.
+- `unique:user`:Checks uniqueness of the field value against a database table (e.g., checking if an email is already registered).
+
+#### Api Validation
+
+For API routes, the `req.apiValidate()` method is used to perform validation. Here's an
+
+```js
+async store(req, res, next) {
+  const validateData = await req.apiValidate({
+    name: ["required"],
+    email: ["email", "unique:user"],
+    password: ["min:6"],
+  });
+
+  res.json({ validateData });
 }
 ```
 
@@ -349,9 +374,21 @@ class UserRequest extends FormRequest {
   constructor(req) {
     super(req);
   }
-
+  // for the web validation
   async rules() {
     return this.validate({
+      name: ["required"],
+      email: [
+        "required",
+        "email",
+        `${this.route("user") ? "next" : "unique:user"}`,
+      ],
+      password: ["required", "min:6", "max:100"],
+    });
+  }
+  // for the Api validation
+  async rules() {
+    return this.apiValidate({
       name: ["required"],
       email: [
         "required",
