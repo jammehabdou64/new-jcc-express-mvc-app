@@ -137,33 +137,23 @@ const UsersController = getController("UsersController");
 Route.get("/", (req, res, next) => {
   return res.json({ message: "Hello, World" });
 });
+```
 
-Route.post("/", (req, res, next) => {
-  //
-});
+Or
 
-Route.patch("/:id", (req, res, next) => {
-  return res.json({ id: req.params.id });
-});
-
-Route.put("/:id", (req, res, next) => {
-  return res.json({ id: req.params.id });
-});
-
-Route.delete("/:id", (req, res, next) => {
-  //
-});
-
+```js
 Route.get("/", [UsersController, "index"]);
-
-Route.get("/{name}", (req, res, next) => {
-  return res.json({ id: req.params.name });
-});
 
 Route.middleware(authenticated).get("/profile", (req, res, next) => {
   return res.json({ message: "I'm Authenticated" });
 });
+```
 
+### Route Group
+
+Route groups in this framework allow for the organization and sharing of route attributes, such as middleware, across multiple routes without the need to specify them individually for each route.
+
+```js
 Route.prefix("/users").group((Route) => {
   Route.get("/", UsersController.index);
   Route.get("/create", UsersController.create);
@@ -172,17 +162,37 @@ Route.prefix("/users").group((Route) => {
   Route.patch("/:id", UsersController.edit);
   Route.delete("/:id", UsersController.destroy);
 });
+```
 
-Route.prefix("/users")
-  .controller(UsersController)
-  .group((Route) => {
-    Route.get("/", "index");
-    Route.get("/create", "create");
-    Route.post("/", "store");
-    Route.get("/{id}", "show");
-    Route.patch("/{id}", "edit");
-    Route.delete("/{id}", "destroy");
-  });
+### Route Prefix
+
+The prefix method adds a string to the beginning of each route name in the group.
+The method is used to prefix each route name in the group with "users", making it easier to identify and manage routes related to user functionality.
+
+```js
+Route.prefix("/users").group((Route) => {
+  Route.get("/", "index");
+  Route.get("/create", "create");
+  Route.post("/", "store");
+  Route.get("/{id}", "show");
+  Route.patch("/{id}", "edit");
+  Route.delete("/{id}", "destroy");
+});
+```
+
+### Route Controller
+
+If all routes in a group use the same controller, you can use the controller method to set that controller for the whole group. Then, when creating routes, you just need to specify the method they call on that controller.
+
+```js
+Route.controller(UsersController).group((Route) => {
+  Route.get("/", "index");
+  Route.get("/create", "create");
+  Route.post("/", "store");
+  Route.get("/{id}", "show");
+  Route.patch("/{id}", "edit");
+  Route.delete("/{id}", "destroy");
+});
 ```
 
 ## Routes Parameter
@@ -689,4 +699,27 @@ For example, to display the name of the authenticated user in a welcome message:
 @else
 <p>Welcome, Guest!</p>
 @endif
+```
+
+### TinkerNode
+
+TinkerNode provides an interactive command-line interface for executing JavaScript code and Mongoose queries directly in the terminal, allowing for quick testing and debugging of MongoDB interactions.
+
+### Features
+
+- Interactive Console: TinkerNode provides an interactive console environment, similar to the Laravel Tinker, where you can execute JavaScript code and Mongoose queries on-the-fly.
+
+- Mongoose Integration: TinkerNode seamlessly integrates with Mongoose, a popular MongoDB object modeling tool for Node.js, enabling you to work with MongoDB databases using familiar Mongoose syntax.
+
+```bash
+node TinkerNode
+
+>User.all()
+[
+  {
+    name:"John Doe",
+    email:"john@gmail.com"
+  }
+]
+
 ```
