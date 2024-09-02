@@ -13,7 +13,7 @@ const runCommand = (command) => {
 };
 
 const repoName = process.argv[2];
-const gitCheckOutCommand = `git clone --depth 1 https://github.com/jammehabdou64/jcc-express-mvc-library ${repoName}`;
+const gitCheckOutCommand = `git clone --depth 1 https://github.com/jammehabdou64/new-jcc-express-starter-app ${repoName}`;
 const installDepsCommand = `cd ${repoName} && npm install`;
 
 console.log(`Cloning the repository with name ${repoName}`);
