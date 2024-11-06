@@ -169,22 +169,23 @@ project-root/
 
 ```
 
-- `Config/`:Configuration files for the application.
-- `Controllers/`:Controllers handling the application logic.
-- `Models/`:Mongoose for database interactions.
+- `app/Config/`:Configuration files for the application.
+- `app/Http/Controllers/`:Controllers handling the application logic.
+- `app/Models/`:Mongoose for database interactions.
 - `public/`:Static assets like CSS and JavaScript files.
 - `routes/`: Two routes file (web.js | api.js) where routes are registered.
 - `resources/views/`: jsBlade templates for rendering views.
-- `server.js`: Main application file.
-- `bootstrap/app.js`:Global middlewares
+- `server.ts`: Main application file.
+- `app/Htpp/kernel.ts`:Global middlewares
 
 ## Routing and Middleware
 
 Basic routing is meant to route your request to an appropriate controller. The routes of the application can be defined in route/web.js or route/api.js file. Here is the general route syntax for each of the possible request. You can define the URLs of your application with the help of routes. These routes can contain variable data, connect to controllers or can be wrapped into middlewares.
 
 ```js
-const { Route, getController, authenticated } = require("jcc-express-mvc");
-const UsersController = getController("UsersController");
+import { Route } from "jcc-express-mvc/Route";
+import { auth } from "jcc-express-mvc";
+import { UsersController } from "@Controllers/UsersController";
 
 Route.get("/", (req, res, next) => {
   return res.json({ message: "Hello, World" });
@@ -196,7 +197,7 @@ Or
 ```js
 Route.get("/", [UsersController, "index"]);
 
-Route.middleware(authenticated).get("/profile", (req, res, next) => {
+Route.middleware(auth).get("/profile", (req, res, next) => {
   return res.json({ message: "I'm Authenticated" });
 });
 ```
@@ -285,64 +286,47 @@ Methods
   These methods encapsulate the logic for handling different user-related operations within the application.
 
 ```js
-const { getModel } = require("jcc-express-mvc");
-const User = getModel("User");
-class UsersController {
-  /**
-   *
-   * @return   @return Express request response next
-   */
-  async create(req, res, next) {
-    return res.render("users/create");
+import { bcrypt, Auth } from "jcc-express-mvc";
+import { Request, Response, Next } from "jcc-express-mvc/http";
+import { User } from "@/Model/User";
+export class UsersController {
+  //
+
+  async index(req: Request, res: Response, next: Next) {
+    return res.json({
+      message: await User.all(),
+    });
   }
 
-  /**
-   *
-   *  @return Express request response next
-   */
-  async index(req, res, next) {
-    const users = await User.find();
-    return res.render("users/index", { users });
+  //
+
+  async store(req: Request, res: Response, next: Next) {
+    await req.validate({
+      name: ["required"],
+      email: ["required", "unique:users"],
+      password: ["required", "min:6"],
+    });
+
+    const save = await User.create({
+      name: req.body.name,
+      email: req.body.email,
+      password: await bcrypt(req.body.password),
+      primary_phone: "7501035",
+    });
+
+    return save
+      ? Auth.attempt(req, res, next)
+      : res.json({ message: "Invalid credentials" });
   }
 
-  /**
-   *
-   *
-   * @return Express request response next
-   */
-  async store(req, res, next) {
-    return res.json({ message: req.body });
-  }
+  //
 
-  /**
-   *
-   * @param    id
-   * @return  @return Express request response next
-   */
-  async show(req, res, next) {
-    return res.render("users/show");
-  }
-
-  /**
-   *
-   *
-   * @param    id
-   *  @return Express request response next
-   */
-  async update(req, res, next) {
-    return res.json({ message: req.params.id });
-  }
-
-  /**
-   *
-   * @param  id
-   * @return Express request response next
-   */
-  async destroy(req, res, next) {
-    return res.json({ message: req.params.id });
+  async show(req: Request, res: Response, next: Next) {
+    return res.json({
+      message: await User.find(req.params.id),
+    });
   }
 }
-module.exports = new UsersController();
 ```
 
 ## Validation
@@ -423,55 +407,28 @@ async store(req, res, next) {
 Custom requests (or Form Requests) are useful in situations when one wants to authorize & validate a request before hitting the controller method.
 
 ```bash
- node jcc make:request UserRequest
+ ts-node artisanNode make:request UserRequest
 ```
 
 ### example
 
 ```js
-const { getModel, FormRequest, bcrypt } = require("jcc-express-mvc");
-const User = getModel("User");
+import { FormRequest } from "jcc-express-mvc/FormRequest";
+import { Request } from "jcc-express-mvc/http";
 
-class UserRequest extends FormRequest {
-  constructor(req) {
+export class UserRequest extends FormRequest {
+  constructor(req: Request) {
     super(req);
   }
-  // for the web validation
+
   async rules() {
-    return this.validate({
-      name: ["required"],
-      email: [
-        "required",
-        "email",
-        `${this.route("user") ? "next" : "unique:user"}`,
-      ],
-      password: ["required", "min:6", "max:100"],
-    });
-  }
-  // for the Api validation
-  async rules() {
-    return this.apiValidate({
-      name: ["required"],
-      email: [
-        "required",
-        "email",
-        `${this.route("user") ? "next" : "unique:user"}`,
-      ],
-      password: ["required", "min:6", "max:100"],
+    await this.apiValidate({
+      //
     });
   }
 
   async save() {
     await this.rules();
-
-    const user = this.route("user")
-      ? await User.findById(this.route("user"))
-      : new User();
-
-    user.name = this.name;
-    user.email = this.email;
-    user.password = await bcrypt(this.password);
-    return user.save();
   }
 }
 ```
@@ -546,7 +503,7 @@ In jcc-express-mvc, the `errors` variable in the view file holds all the validat
 
 ## Templating Engine
 
-`jcc-express-starter` allows you to use any templating engine of your choice for rendering views. The package comes pre-configured with jsBlade, which is similar to Laravel's Blade templating engine. However, you can easily switch to another templating engine by configuring it in the `app/Config/engine.js` file.
+`jcc-express-starter` allows you to use any templating engine of your choice for rendering views. The package comes pre-configured with jsBlade, which is similar to Laravel's Blade templating engine. However, you can easily switch to another templating engine by configuring it in the `app/Config/engine.ts` file.
 
 ### Configuring Templating Engine
 
@@ -554,7 +511,7 @@ To configure a different templating engine, follow these steps:
 
 1. Navigate to the `app/Config` directory in your project.
 
-2. Open the `engine.js` file.
+2. Open the `engine.ts` file.
 
 3. Mention .env File Configuration: Explain how users can enable the chosen templating engine by setting the TEMPLATE_ENGINE variable to true in the .env file.
 
@@ -589,7 +546,7 @@ jcc-express-starter provides a set of helper functions to simplify common tasks 
 - **bcrypt**: A async function for password hashing using bcrypt.
 
   ```javascript
-  const { bcrypt } = require("jcc-express-mvc");
+  import { bcrypt } from "jcc-express-mvc";
   const hashPass = await bcrypt("123456");
   // Example usage
   ```
@@ -597,7 +554,7 @@ jcc-express-starter provides a set of helper functions to simplify common tasks 
 - **verifyHash**: A async function for verifying hashed passwords.
 
   ```javascript
-  const { verifyHash } = require("jcc-express-mvc");
+  import { verifyHash } from "jcc-express-mvc";
   const isMatch = await verifyHash("password", hashedPassword);
   // Example usage
   ```
