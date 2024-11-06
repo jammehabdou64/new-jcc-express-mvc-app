@@ -47,37 +47,85 @@ npm run dev
 To generate a controller class:
 
 ```bash
-node jcc make:controller UsersController
-```
-
-To generate a api controller class:
-
-```bash
-node jcc make:ApiController UsersController
+ts-node artisanNode make:controller UsersController
 ```
 
 To generate a model:
 
 ```bash
-node jcc make:model User
+ts-node artisanNode make:model User
 ```
 
 To generate a request class:
 
 ```bash
-node jcc make:request UserRequest
+ts-node artisanNode make:request UserRequest
 ```
 
-To generate a controller class and model:
+To generate a controller, model and migration :
 
 ```bash
-node jcc make:controller UsersController User --resources
+ts-node artisanNode make:model User -mcr
 ```
 
-Or
+To generate a controller, model, migration and seeder:
 
 ```bash
-node jcc make:controller UsersController User -r
+ts-node artisanNode make:model User -mcsr
+```
+
+To generate a migration
+
+```bash
+ts-node artisanNode make:migration create_users_table
+```
+
+To generate a seeder
+
+```bash
+ts-node artisanNode make:seeder UserSeeder
+```
+
+To run migration
+
+```bash
+ts-node artisanNode migrate
+```
+
+To undo the last migration
+
+```bash
+ts-node artisanNode migrate:rollback
+```
+
+To undo multiple migration
+
+```bash
+ts-node artisanNode migrate:rollback --steps=3
+```
+
+To drop all migrations
+
+````bash
+ts-node artisanNode migrate:reset
+``
+
+To drop all migrations and re-run migrations
+
+```bash
+ts-node artisanNode migrate:fresh
+````
+
+To run seeders
+
+```bash
+ts-node artisanNode db:seed
+```
+
+To run single seeder
+
+```bash
+ts-node artisanNode db:seed --class=UserSeeder
 ```
 
 ## Project Structure
@@ -86,20 +134,20 @@ node jcc make:controller UsersController User -r
 project-root/
 |--app
 | |--Config/
-| | |--cors/
-| | | |--cors.js
-| | | |--socket.js
-| | |--egine.js
-| |--Controllers/
-| | |--UsersController.js
+| | | --app.ts
+| | |--egine.ts
+| |--Http
+| | |--Controllers/
+| | | |--UsersController.ts
+| | |--Middlewares/
+| | |  |--app.js
+| | |--Request/
+| | |  |--UserRequest.js
+| | |--kernel.ts
 | |--Models/
-| | |--User.js
-| |--Middlewares/
-| | |--app.js
-| |--Request/
-| | |--UserRequest.js
+| | |--User.ts
 |--bootstrap
-| |-app.js
+| |-app.ts
 |--public/
 | |--css/
 | | |--app.css
@@ -111,9 +159,13 @@ project-root/
 | | | |--header.blade.html
 | | |--layout.blade.html
 | | |--index.blade.html
+| |--css/
+| | |--app.css
+| |--js/
+| | |--app.js
 |--routes/
-| |--web.js
-| |--api.js
+| |--web.ts
+| |--api.ts
 
 ```
 
