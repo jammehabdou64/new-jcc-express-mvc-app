@@ -2,106 +2,438 @@
 
 **Note: This package is not recommended for use in production environments. It's intended for learning purposes only. Use in production at your own risk.**
 
-## jcc-express-starter
+# jcc-express-starter
+
+## 1. Introduction
 
 jcc-express-mvc is a lightweight Node.js package that simplifies the development of Express.js applications using a structure inspired by Laravel's file organization. It encourages the use of the Model-View-Controller (MVC) architectural pattern, providing a clean and organized approach to building and scaling your Express.js projects.
 
-## Features
+## 2. Features
 
-- Sets up an Express.js web application with MVC architecturevalidation for form data
-- Opinionated project structure for organized code
-- Built-in validation methods
-- Two routes file for easy route management
-- Comes with jsBlade similar to laravel blade for view rendering, But you can use any templating engine of choice.
-- Includes configuration with MongoDB
-- Includes configuration with dotenv
+- #### Express.js Framework (jcc-express-starter)
 
-## Getting Started
+  - Sets up an Express.js web application with MVC architecturevalidation for form data
+  - Opinionated project structure for organized code
+  - Built-in validation methods
+  - Two routes file for easy route management
+  - Comes with jsBlade similar to laravel blade for view rendering, But you can use any templating engine of choice.
+  - Includes configuration with Mysql
+  - Includes configuration with dotenv
 
-### Prerequisites
+- #### ORM (jcc-eloquent)
+  - Query Builder with methods for complex SQL operations
+  - Model system with fillable, guarded, and casts properties
+  - Relationships, including polymorphic relations (morphMany)
+  - Event hooks (e.g., creating, booted) for action triggers
+  - Schema Builder for migrations, inspired by Laravel's schema API
 
-Make sure you have Node.js and npm (Node Package Manager) installed on your machine.
+## 3. Installation
 
-### Usage
+#### Prerequisites
 
+- `Node.js and npm installed`
+- `ts-node globally installed`
+
+Make sure you have Node.js and npm (Node Package Manager) installed and install ts-node globally on your machine.
 To create a new Express.js project using `jcc-express-starter`, simply run the following command in your terminal:
 
 ```bash
-npx jcc-express-starter new-express-app
+npx jcc-express-starter my-express-app
 ```
+
+## 4. Quick Start Guide
 
 This will create a new directory named my-express-app and set up the Express.js application inside it.
 
-Navigate to the newly created directory:
+#### 1.Navigate to the newly created directory:
 
 ```bash
 cd my-express-app
 ```
 
-Start the application:
+#### 2. Configure Environment
+
+Edit the .env file to configure your database and other environment-specific settings. Example .env:
+
+```bash
+APP_SESSION_SECTRET=app-session-1203-4-556-22
+PORT=5500
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=my_database
+DB_USERNAME=root
+DB_PASSWORD=password
+
+```
+
+#### 3. Start the application:
 
 ```bash
 npm run dev
 ```
 
-To generate a controller class:
+## 5. ArtisanNode CLI Commands
+
+Generate Controllers, Models, Migrations, and Seeders:
 
 ```bash
-ts-node artisanNode make:controller UsersController
+ts-node artisanNode make:controller UsersController # Controller
+ts-node artisanNode make:model User # Model
+ts-node artisanNode make:request UserRequest #Request
+ts-node artisanNode make:model User -mcr  # Model, Controller, Migration
+ts-node artisanNode make:model User -mcsr # Model, Controller, Migration, Seeder
+
 ```
 
-To generate a model:
-
-```bash
-ts-node artisanNode make:model User
-```
-
-To generate a request class:
-
-```bash
-ts-node artisanNode make:request UserRequest
-```
-
-To generate a controller, model and migration :
-
-```bash
-ts-node artisanNode make:model User -mcr
-```
-
-To generate a controller, model, migration and seeder:
-
-```bash
-ts-node artisanNode make:model User -mcsr
-```
-
-To generate a migration
-
-```bash
-ts-node artisanNode make:migration create_users_table
-```
-
-To generate a seeder
-
-```bash
-ts-node artisanNode make:seeder UserSeeder
-```
-
-To run migration
+Run Database Migrations:
 
 ```bash
 ts-node artisanNode migrate
+ts-node artisanNode migrate:rollback            # Undo the last migration
+ts-node artisanNode migrate:rollback --steps=3  # Undo multiple migrations
+ts-node artisanNode migrate:fresh               # Reset migrations and re-run
+ts-node artisanNode migrate:reset               # Reset migrations
+ts-node artisanNode migrate:fresh               # Reset migrations and re-run
+ts-node artisanNode db:seed                     # Run seeders
+ts-node artisanNode db:seed --class=UserSeeder  # Check for UserSeeder in the seeders and run the seeder
+
+
+
 ```
 
-To undo the last migration
+## 6. Core Modules
 
-```bash
-ts-node artisanNode migrate:rollback
+#### Express Starter (jcc-express-starter)
+
+- `Service Container`: Registers services and manages dependency injection. Services can be accessed in controllers through constructor injection.
+- `CLI Commands`: Provides a custom CLI that can be extended with user-defined commands as providers.
+- `Global Helpers`: Offers utility functions globally accessible across the application, similar to Laravel helpers.
+- `Error Handling`: Exception handling is customized to include stack traces, file paths, and code snippets with highlights for the error line.
+
+### ORM (jcc-eloquent)
+
+- `Model Class`: Supports mass assignment protection with fillable and guarded properties. Includes attribute casting with the casts property.
+- `Query Builder`: Flexible query builder supporting complex queries like select, where, orderBy, paginate, exists, onlyTrashed, and restore.
+- `Schema Builder`: Includes a Blueprint class that allows defining table schemas, adding columns, foreign keys, and enabling soft deletes.
+
+## 7. jcc-eloquent
+
+`jcc-eloquent` is an ORM for Node.js designed to provide Eloquent-style features and database interaction. It simplifies complex queries and supports models, relationships, mass assignment, and events
+
+#### Key Features
+
+- Model relationships: hasOne, hasMany, morphMany, etc.
+- Eloquent-like mass assignment with fillable and guarded properties
+- Attribute casting with casts and hidden properties for sensitive fields
+- Event hooks for lifecycle methods (booted, creating, etc.)
+- QueryBuilder with chainable methods like select, where, orderBy, and pagination
+
+#### Basic Usage
+
+Define models with properties like fillable, guarded, hidden, casts, and event hooks.
+
+```js
+import { Model } from "jcc-eloquent";
+
+class User extends Model {
+    // Attributes hidden from JSON serialization
+  protected static hidden: string[] = ["password"];
+
+  // Attributes allowed for mass assignment
+  protected static fillable: string[] = ["name"];
+
+  // Attributes excluded from mass assignment
+  protected static guarded: string[] = ["role_id"];
+
+  // Enables soft delete functionality
+  protected static softDelete: boolean = true;
+
+// Cast attributes with custom transformations
+  protected static casts = {
+      created_at: 'date', // 2024-05-23
+      created_at:'time',// 12:58
+      created_at:'datetime'// 2024-05-23 12:58
+      updated_at:'now'// 2 hours ago
+      updated_at:'date:d-m-y' // 23-05-2024
+      updated_at:'date:d/m/y' // 23/05/2024
+      getEmail: this.getEmail
+      setEmail: this.setEmail
+      id:'integer' // return the id as an integer  1;
+      price:'string' //  return the price as an string "20000"
+      draft:'array' // Will parse to stringyfy the data
+    };
+
+     // Attribute getter - retrieves email in lowercase
+    protected static getEmail(value)
+    {
+      return value.toUppercase()
+    }
+
+  // Attribute setter - sets email in uppercase
+    protected static setEmail(value)
+    {
+      return value.toLowercase()
+    }
+
+}
 ```
 
-To undo multiple migration
+#### Available Relationships
 
-```bash
-ts-node artisanNode migrate:rollback --steps=3
+```js
+class Post extends Model {
+  author() {
+    return this.belongsTo(User);
+  }
+
+  comments() {
+    return this.hasMany(Comment);
+  }
+
+  likes() {
+    return this.morphyMany("likes");
+  }
+
+  //Implement custom events to hook into model actions.
+  static booted(): void {
+    this.creating((data) => {
+      // Custom logic before creating a post (e.g., setting defaults)
+    });
+
+    this.created((data) => {
+      // Custom logic after creating a post (e.g., setting defaults)
+    });
+
+    this.updating((data) => {
+      // Custom logic before updating a post (e.g., setting defaults)
+    });
+
+    this.updated((data) => {
+      // Custom logic after updating a post (e.g., setting defaults)
+    });
+
+    this.deleting((data) => {
+      // Custom logic before deleting a post (e.g., setting defaults)
+    });
+  }
+}
+```
+
+### Querying the Database
+
+```js
+import { bcrypt, Auth } from "jcc-express-mvc";
+import { Request, Response, Next } from "jcc-express-mvc/http";
+import { Post } from "@/Model/Post";
+import { Blueprint } from "jcc-eloquent/QueryBuilder";
+export class PostsController {
+  //
+
+  async index(req: Request, res: Response, next: Next) {
+    return res.json({
+      message: await Post.with("author",{comments(query:QueryBuilder)=>query.where('status','active').with('user')
+      }).paginate(req, 100),
+    });
+  }
+
+  //
+
+  async store(req: Request, res: Response, next: Next) {
+    const attributes = await req.validate({
+      name: ["required"],
+      email: ["required", "unique:post"],
+      password: ["required", "min:6"],
+    });
+
+    const save = await Post.create({ attributes });
+    return save
+      ? Auth.attempt(req, res, next)
+      : res.json({ message: "Invalid credentials" });
+  }
+
+  //
+
+  async show(req: Request, res: Response, next: Next) {
+    return res.json({
+      message: await Post.find(req.params.id),
+    });
+  }
+}
+```
+
+`Model.all()`
+Retrieves all records from the database table associated with the current model.
+
+```js
+const users = await User.all();
+console.log(users);
+```
+
+`Model.find(id)`
+Retrieves a single record from the database table associated with the current model by its ID.
+
+```js
+const user = await User.find(1);
+console.log(user);
+```
+
+`Model.create(data)`
+Creates one or more records in the database table associated with the current model.
+
+```js
+const user = await User.create({
+  name: "John Doe",
+  email: "john.doe@example.com",
+  age: 30,
+});
+console.log(user);
+
+const users = await User.create([
+  { name: "Jane Doe", email: "jane.doe@example.com", age: 28 },
+  { name: "John Smith", email: "john.smith@example.com", age: 35 },
+]);
+console.log(users);
+```
+
+`save()`
+Saves the current instance to the database. If the instance has an id, it performs an update; otherwise, it performs an insert.
+
+```js
+const user = new User();
+user.name = "Abdou";
+await user.save();
+```
+
+### Relationship Definitions
+
+- `hasOne(modelName, foreignKey = null, localKey = "id")`
+  Defines a one-to-one relationship between the current model and another model.
+
+- `hasMany(model, foreignKey = null, localKey = "id")`
+  Defines a one-to-many relationship between the current model and another model.
+
+- `belongsTo(modelName, foreignKey = null, localKey = "id")`
+  Defines a belongs-to relationship between the current model and another model.
+
+### Using Relationships
+
+```js
+import { QueryBuilder } from "jcc-eloquent/QueryBuilder";
+
+const user = await User.with("posts").get();
+const post = await Post.with({ author(query:QueryBuilder) => query.where('status', 'active') } , 'comments').get();
+```
+
+### Query Builder Methods
+
+The following methods are available in the query builder:
+
+- `select(...columns)`
+- `distinct()`
+- `from(tableName)`
+- `where(column, operator, value)`
+- `whereLike(column, searchValue)`
+- `orWhere(column, operator, value)`
+- `orderBy(column, direction)`
+- `limit(value)`
+- `take(value)`
+- `offset(count)`
+- `groupBy(...columns)`
+- `having(column, operator, value)`
+- `join(table, firstColumn, operator, secondColumn)`
+- `innerJoin(table, firstColumn, operator, secondColumn)`
+- `leftJoin(table, firstColumn, operator, secondColumn)`
+- `rightJoin(table, firstColumn, operator, secondColumn)`
+- `insert(data)`
+- `get()`
+- `update(data)`
+- `delete(id)`
+- `latest(column)`
+- `oldest(column)`
+- `with(...relations)`
+- `each(callback)`
+- `map(callback)`
+- `value(field)`
+- `exists()`
+- `doesntExist()`
+- `count()`
+- `max(column)`
+- `min(column)`
+- `sum(column)`
+- `avg(column)`
+- `paginate(request, perPage)`
+- `resetQuery()`
+- `onlyTrashed()`
+- `withTrashed()`
+- `restore()`
+- `whereHas(relationalMethod, callback)`
+
+### Query Instance Methods
+
+Once you've retrieved a model instance from the database, you can interact with it using the following methods:
+
+#### 1. `save()`
+
+**Description:** Saves the current instance to the database. If it's a new instance, it will perform an `INSERT`; if it's an existing instance, it will perform an `UPDATE`.
+
+**Returns:** `Promise<any>`
+
+**Example:**
+
+```typescript
+const user = await User.find(1);
+user.name = "Updated Name";
+await user.save(); // Updates the existing record
+```
+
+#### 2. `saveQuietly()`
+
+**Description:** Similar to `save()`, but suppresses any events that would normally be triggered during the save operation.
+
+**Returns:** `Promise<any>`
+
+**Example:**
+
+```typescript
+import { Model } from "jcc-eloquent";
+
+class Post extends Model {
+  protected static booted() {
+    this.created(async (data) => {
+      data.slug = "slug";
+      await data.saveQuietly(); // Saves without triggering any events
+    });
+  }
+}
+```
+
+#### 3. `load(...relations: Array<any>)`
+
+**Description:** Eager loads relationships on the model instance.
+
+**Returns:** `Promise<any>`
+
+**Example:**
+
+```typescript
+const user = await User.find(1);
+await user.load("posts", "comments"); // Loads posts and comments for the user
+```
+
+#### 4. `update()`
+
+**Description:** Updates the current instance in the database with the new attribute values.
+
+**Returns:** `Promise<any>`
+
+**Example:**
+
+```typescript
+const user = await User.find(1);
+user.email = "new.email@example.com";
+await user.update(); // Updates the email field in the database
 ```
 
 #### 5. `delete()`
@@ -117,29 +449,44 @@ const post = await Post.find(1);
 await post.delete(); // Deletes the post from the database
 ```
 
-````bash
-ts-node artisanNode migrate:reset
-``
+#### Query Instance Methods Overview
 
-To drop all migrations and re-run migrations
+The following methods are part of the Query Instance used for interacting with the database:
 
-```bash
-ts-node artisanNode migrate:fresh
-````
+```typescript
+//Query Instance Methods
+  save() ;
+  saveQuietly();
+  load(...relations: Array<any>): ; // Eager loads relationships
+  update(); // Updates the current instance in the database
+  delete(); // Deletes the current instance from the database
 
-To run seeders
-
-```bash
-ts-node artisanNode db:seed
 ```
 
-To run single seeder
+- **Methods**:
+  - `save()`: Persists the current instance to the database.
+  - `saveQuietly()`: Saves the instance without firing any events (e.g., hooks).
+  - `load()`: Loads specified relationships for the instance, eager loading them for optimization.
+  - `update()`: Updates the current instance with new data.
+  - `delete()`: Deletes the instance from the database, returning a boolean indicating success.
 
-```bash
-ts-node artisanNode db:seed --class=UserSeeder
+#### Schema Builder
+
+Define database schemas with `Blueprint` for migrations.
+
+```js
+import { Blueprint } from "jcc-eloquent";
+
+Blueprint.create("users", (table) => {
+  table.id();
+  table.string("name");
+  table.unsignedBigInteger("role_id");
+  table.foreign("role_id").references("id").on("roles");
+  table.timestamps();
+});
 ```
 
-## Project Structure
+## 8. Project Structure
 
 ```bash
 project-root/
@@ -157,8 +504,15 @@ project-root/
 | | |--kernel.ts
 | |--Models/
 | | |--User.ts
+| |--Providers
+| | |--AppServiceProvider.ts
 |--bootstrap
 | |-app.ts
+|--database
+| |--migrations
+| | |--create_users_table.ts
+| |--seeders
+| | |--UserSeeder.ts
 |--public/
 | |--css/
 | | |--app.css
@@ -182,7 +536,8 @@ project-root/
 
 - `app/Config/`:Configuration files for the application.
 - `app/Http/Controllers/`:Controllers handling the application logic.
-- `app/Models/`:Mongoose for database interactions.
+- `app/Models/`:Models for database interactions.
+- `app/Providers`:
 - `public/`:Static assets like CSS and JavaScript files.
 - `routes/`: Two routes file (web.js | api.js) where routes are registered.
 - `resources/views/`: jsBlade templates for rendering views.
@@ -265,7 +620,7 @@ In the `jcc-express-mvc` framework, routes often contain parameters that are dyn
 Routes parameters can be defined in route paths using placeholders indicated by : or {} followed by the parameter name.
 
 ```js
-const { Route } = require("jcc-express-mvc");
+import { Route } from "jcc-express-mvc/Route";
 
 Route.get("/:id", (req, res) => {
   console.log(req.params.id);
@@ -275,7 +630,7 @@ Route.get("/:id", (req, res) => {
 or
 
 ```js
-const { Route } = require("jcc-express-mvc");
+import { Route } from "jcc-express-mvc/Route";
 
 Route.get("/{id}", (req, res) => {
   console.log(req.params.id);
@@ -338,6 +693,26 @@ export class UsersController {
     });
   }
 }
+```
+
+## 8. Custom Providers
+
+Create and register providers to extend the framework's functionality. Providers can register new services or handle custom logic for your app.
+
+```js
+import { Container } from "jcc-express-mvc/Container";
+import { ServiceProvider } from "jcc-express-mvc/lib/Services/ServiceProvider";
+
+export class AppServiceProvider extends ServiceProvider {
+  constructor(app: Container) {
+    super(app);
+  }
+
+  public register(): void {}
+
+  public boot(): void {}
+}
+
 ```
 
 ## Validation
@@ -537,7 +912,7 @@ To configure a different templating engine, follow these steps:
 
 ```
 
-Save the changes to the engine.js file.
+Save the changes to the engine.ts file.
 
 Now, your Express.js application will use the configured templating engine for rendering views.
 
@@ -573,70 +948,24 @@ jcc-express-starter provides a set of helper functions to simplify common tasks 
 - **authenticated**: A function for implementing Passport authentication.
 
   ```javascript
-  const { Route, authenticated } = require("jcc-express-mvc");
-  Route.middleware(authenticated).get("/profile", (req, res) => {
-    //Access authenticated user's profile
+  import { auth } from "jcc-express-mvc";
+  import { Route } from "jcc-express-mvc/Route";
+
+  Route.middleware(auth).get("/profile", (req, res) => {
+    //Access auth user's profile
   });
   ```
 
-- **apiAuthenticated**: A function for API JWT authentication.
+- **apiAuthenticated**: A function for API JWT authentication. You can i get the user id with req.id
 
 ```javascript
-const { ApiRoute, apiAuthenticated } = require("jcc-express-mvc");
+const { ApiRoute, apiAuth } = require("jcc-express-mvc");
 
 // Example usage
-ApiRoute.middleware(apiAuthenticated).post("/api/data", (req, res) => {
+ApiRoute.middleware(apiAuth).post("/api/data", (req, res) => {
   // Access authenticated user's data
+  //req.id
 });
-```
-
-**getModel**: A function to require a model file from the Models directory.
-
-```javascript
-const { getModel } = require("jcc-express-mvc");
-
-// Example usage
-const User = getModel("User");
-```
-
-**getController**: A function to require a controller file from the Controllers directory.
-
-```javascript
-const { Route, getController } = require("jcc-express-mvc");
-
-// Example usage
-const UsersController = getController("UsersController");
-
-Route.get("/", UsersController.index);
-```
-
-**getApiController**: A function to require an API controller file from the API Controllers directory.
-
-```javascript
-const { ApiRoute, getApiController } = require("jcc-express-mvc");
-
-// Example usage
-const MessagesController = getApiController("MessagesController");
-
-ApiRoute.get("/", MessagesController.index);
-```
-
-**getMiddleware**: A function to require a middleware file from the Middlewares directory.
-
-```javascript
-const { getMiddleware } = require("jcc-express-mvc");
-
-// Example usage
-const AuthMiddleware = getMiddleware("AuthMiddleware");
-```
-
-**getRequest**: A function to require a request file from the Request directory
-
-```javascript
-const { getRequest } = require("jcc-express-mvc");
-
-// Example usage
-const AuthRequest = getRequest("AuthRequest");
 ```
 
 ## jsBlade Templating Engine
@@ -727,12 +1056,12 @@ TinkerNode provides an interactive command-line interface for executing JavaScri
 
 ### Features
 
-- Interactive Console: TinkerNode provides an interactive console environment, similar to the Laravel Tinker, where you can execute JavaScript code and Mongoose queries on-the-fly.
+- Interactive Console: TinkerNode provides an interactive console environment, similar to the Laravel Tinker, where you can execute JavaScript code and jcc-eloquent queries.
 
-- Mongoose Integration: TinkerNode seamlessly integrates with Mongoose, a popular MongoDB object modeling tool for Node.js, enabling you to work with MongoDB databases using familiar Mongoose syntax.
+- Jcc eloquent Integration: TinkerNode seamlessly integrates with jcc-eloquent. enabling you to work with mysql databases using jcc-eloquent syntax.
 
 ```bash
-node TinkerNode
+te-node tinkerNode
 
 >User.all()
 [
