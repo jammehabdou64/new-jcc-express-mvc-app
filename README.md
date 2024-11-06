@@ -162,7 +162,7 @@ class User extends Model {
       setEmail: this.setEmail
       id:'integer' // return the id as an integer  1;
       price:'string' //  return the price as an string "20000"
-      draft:'array' // Will parse to stringyfy the data
+      draft:'array' // Will parse or stringyfy the data
     };
 
      // Attribute getter - retrieves email in lowercase
@@ -368,7 +368,6 @@ The following methods are available in the query builder:
 - `onlyTrashed()`
 - `withTrashed()`
 - `restore()`
-- `whereHas(relationalMethod, callback)`
 
 ### Query Instance Methods
 
@@ -475,9 +474,9 @@ The following methods are part of the Query Instance used for interacting with t
 Define database schemas with `Blueprint` for migrations.
 
 ```js
-import { Blueprint } from "jcc-eloquent";
+import { Schema } from "jcc-eloquent";
 
-Blueprint.create("users", (table) => {
+Schema.create("users", (table) => {
   table.id();
   table.string("name");
   table.unsignedBigInteger("role_id");
