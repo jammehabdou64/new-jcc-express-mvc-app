@@ -104,7 +104,18 @@ To undo multiple migration
 ts-node artisanNode migrate:rollback --steps=3
 ```
 
-To drop all migrations
+#### 5. `delete()`
+
+**Description:** Deletes the current instance from the database.
+
+**Returns:** `Promise<boolean>`
+
+**Example:**
+
+```typescript
+const post = await Post.find(1);
+await post.delete(); // Deletes the post from the database
+```
 
 ````bash
 ts-node artisanNode migrate:reset
