@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
 const { execSync } = require("child_process");
+const os = require("os");
 
 const runCommand = (command) => {
   try {
     execSync(`${command}`, { stdio: "inherit" });
   } catch (error) {
-    console.error(`Failed to execute ${command}`, e);
+    console.error(`Failed to execute ${command}`, error?.message);
     return false;
   }
   return true;
@@ -25,6 +26,21 @@ if (!checkOut) process.exit(-1);
 console.log(`Installing dependence for ${repoName}`);
 
 const installDep = runCommand(installDepsCommand);
+
+const removeGitDirectory = (name) => {
+  try {
+    if (os.platform() === "win32") {
+      // For Windows
+      const command = `rmdir /s /q ${gitDirPath}`;
+      runCommand(`cd ${name} && ${command}`);
+    } else {
+      const command = `rm -rf ${gitDirPath}`;
+      runCommand(`cd ${name} && ${command}`);
+    }
+  } catch (error) {}
+};
+
+removeGitDirectory(repoName);
 
 if (!installDep) process.exit(-1);
 
