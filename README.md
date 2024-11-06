@@ -715,7 +715,100 @@ export class AppServiceProvider extends ServiceProvider {
 
 ```
 
-## Validation
+## 9. Dependency Injection in jcc-express-mvc
+
+`jcc-express-mvc` offers a dependency injection (DI) system inspired by Laravel, making it easy to manage dependencies and provide required services to classes (like controllers) automatically.
+
+#### How Dependency Injection
+
+The DI system in jcc-express-mvc works as follows:
+
+1.`Define Providers`: A Provider is a class that registers services (or dependencies) in the service container. You create providers to tell the container how to resolve and inject a particular dependency.
+
+2.`Register Services`: In each provider, you define how each service or dependency should be resolved. The framework allows you to register services at startup, so they're readily available for injection when needed.
+
+3.`Constructor Injection`: jcc-express-mvc uses constructor injection to inject dependencies directly into controllers and other classes. When the container instantiates a class, it automatically identifies its dependencies and injects them based on the constructor’s parameters.
+
+#### Setting Up Dependency Injection
+
+To implement DI, follow these steps:
+
+##### Create a Service Provider
+
+```js
+import { Injectable } from "jcc-express-mvc/Dependency";
+// app/Services
+@Injectable()
+export class Calculator {
+  add(a: number, b: number) {
+    return a + b;
+  }
+
+  subtract(a: number, b: number) {
+    return a - b;
+  }
+}
+```
+
+#### OR
+
+```js
+export class Calculator {
+  add(a: number, b: number) {
+    return a + b;
+  }
+
+  subtract(a: number, b: number) {
+    return a - b;
+  }
+}
+
+// app/Providers/AppServiceProviders.ts
+
+import { Container } from "jcc-express-mvc/Container";
+import { ServiceProvider } from "jcc-express-mvc/lib/Services/ServiceProvider";
+import {Calculator} from "../Services/CalculatorService.ts"
+import {UserService} from "../Services/UserService.ts"
+
+export class AppServiceProvider extends ServiceProvider {
+  constructor(app: Container) {
+    super(app);
+  }
+
+  public register(): void {
+    this.app.singleton<Calculator>('Calculator', new Calculator());
+    this.app.bind<UserService>('UserService', new Calculator());
+  }
+
+  public boot(): void {}
+}
+
+```
+
+#### Use Dependency Injection in Controllers
+
+With your services registered, you can use them in controllers or other classes by requesting them in the constructor:
+
+```js
+import { Inject } from "jcc-express-mvc/Dependency"
+import { Calculator } from "@/Services/Calculator"
+
+export class UserController  {
+  constructor(
+    @Inject("Calculator")
+    private calculator: Calculator
+    ) {
+
+  }
+
+  async showUser(id: number) {
+    const resutl = await this.calculator.add(2 + 2);
+    return resutl;
+  }
+}
+```
+
+## 10. Validation
 
 The jcc-express-mvc framework comes with built-in validation rules that enable you to ensure the validity of data submitted by users before further processing. These validation rules can be applied either in web routes or API routes using the provided methods.
 
@@ -788,7 +881,7 @@ async store(req, res, next) {
 - `nullable`
 - `next`
 
-## Form Request
+## 11. Form Request
 
 Custom requests (or Form Requests) are useful in situations when one wants to authorize & validate a request before hitting the controller method.
 
@@ -887,7 +980,7 @@ In jcc-express-mvc, the `errors` variable in the view file holds all the validat
 </form>
 ```
 
-## Templating Engine
+## 12. Templating Engine
 
 `jcc-express-starter` allows you to use any templating engine of your choice for rendering views. The package comes pre-configured with jsBlade, which is similar to Laravel's Blade templating engine. However, you can easily switch to another templating engine by configuring it in the `app/Config/engine.ts` file.
 
@@ -925,7 +1018,7 @@ handlebars: Minimal templating on steroids.
 Feel free to choose the templating engine that best fits your project requirements and preferences.
 ```
 
-## Helpers
+## 13. Helpers
 
 jcc-express-starter provides a set of helper functions to simplify common tasks in your Express.js applications:
 
@@ -968,7 +1061,7 @@ ApiRoute.middleware(apiAuth).post("/api/data", (req, res) => {
 });
 ```
 
-## jsBlade Templating Engine
+## 14. jsBlade Templating Engine
 
 jcc-express-starter supports the jsBlade templating engine, which provides directives similar to Laravel Blade. jsBlade allows you to write expressive and clean templates for rendering views in your Express.js applications.
 
