@@ -22,7 +22,7 @@ const removeGitDirectory = (name) => {
       runCommand(`cd ${name} && rm -rf .git`);
     }
   } catch (error) {
-    console.error("Failed to remove .git directory", error.message);
+    console.error("Failed to remove .git directory");
   }
 };
 
