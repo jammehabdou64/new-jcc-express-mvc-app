@@ -1,6 +1,6 @@
 {
   "name": "jcc-express-starter",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "bin": "./bin/cli.js",
   "description": "express mvc",
   "main": "index.js",
@@ -11,7 +11,19 @@
     "type": "git",
     "url": "https://github.com/jammehabdou64/new-jcc-express-mvc-app"
   },
-  "keywords": [],
+  "keywords": [
+    "express",
+    "express mvc",
+    "framework",
+    "js framework",
+    "js",
+    "node framework",
+    "jcc",
+    "mvc",
+    "eloquent",
+    "node laravel",
+    "express inertia"
+  ],
   "author": "Abdou Jammeh",
   "license": "ISC"
 }
