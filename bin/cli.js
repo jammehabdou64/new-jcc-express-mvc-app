@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const { execSync } = require("child_process");
+const inquirer = require("inquirer");
 const os = require("os");
 
 const runCommand = (command) => {
@@ -13,40 +14,69 @@ const runCommand = (command) => {
   return true;
 };
 
-const repoName = process.argv[2];
-const gitCheckOutCommand = `git clone --depth 1 https://github.com/jammehabdou64/new-jcc-express-starter-app ${repoName}`;
-const installDepsCommand = `cd ${repoName} && npm install`;
-
-console.log(`Cloning the repository with name ${repoName}`);
-
-const checkOut = runCommand(gitCheckOutCommand);
-
-if (!checkOut) process.exit(-1);
-
-console.log(`Installing dependence for ${repoName}`);
-
-const installDep = runCommand(installDepsCommand);
-
 const removeGitDirectory = (name) => {
   try {
     if (os.platform() === "win32") {
-      // For Windows
-      const command = `rmdir /s /q ${gitDirPath}`;
-      runCommand(`cd ${name} && ${command}`);
+      runCommand(`cd ${name} && rmdir /s /q .git`);
     } else {
-      const command = `rm -rf ${gitDirPath}`;
-      runCommand(`cd ${name} && ${command}`);
+      runCommand(`cd ${name} && rm -rf .git`);
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error("Failed to remove .git directory", error.message);
+  }
 };
 
-removeGitDirectory(repoName);
+const setupProject = async () => {
+  try {
+    const answers = await inquirer.default.prompt([
+      {
+        type: "input",
+        name: "repoName",
+        message: "Enter your project name:",
+        default: "my-jcc-app",
+      },
+      {
+        type: "list",
+        name: "frontend",
+        message: "Select your preferred frontend:",
+        choices: ["Inertia + React", "Inertia + Vue", "JSBlade"],
+      },
+    ]);
 
-if (!installDep) process.exit(-1);
+    const { repoName, frontend } = answers;
+    let repoURL =
+      "https://github.com/jammehabdou64/new-jcc-express-starter-app";
 
-const createEnv = runCommand(`cd ${repoName} && cp .env.example .env`);
-if (!createEnv) process.exit(-1);
-console.log("Congradulation you are now ready.");
-console.log(`cd ${repoName}`);
-console.log("start server");
-console.log("npm run dev");
+    if (frontend === "Inertia + React") {
+      repoURL = "https://github.com/jammehabdou64/jcc-express-react-app";
+    }
+    if (frontend === "Inertia + Vue") {
+      repoURL = "https://github.com/jammehabdou64/jcc-express-vue-app";
+    }
+
+    console.log(`\nCloning the repository (${frontend}) into ${repoName}...\n`);
+    const gitCheckOutCommand = `git clone --depth 1 ${repoURL} ${repoName}`;
+    const checkOut = runCommand(gitCheckOutCommand);
+    if (!checkOut) process.exit(-1);
+
+    console.log(`\nInstalling dependencies for ${repoName}...\n`);
+    const installDepsCommand = `cd ${repoName} && npm install`;
+    const installDep = runCommand(installDepsCommand);
+    if (!installDep) process.exit(-1);
+
+    removeGitDirectory(repoName);
+
+    console.log("\nSetting up environment file...\n");
+    const createEnv = runCommand(`cd ${repoName} && cp .env.example .env`);
+    if (!createEnv) process.exit(-1);
+
+    console.log("\n🎉 Congratulations! Your project is ready.\n");
+    console.log(`➡️  cd ${repoName}`);
+    console.log("🚀 Start the server with:");
+    console.log("   npm run dev");
+  } catch (error) {
+    console.log("Sorry, An error occur");
+  }
+};
+
+setupProject();

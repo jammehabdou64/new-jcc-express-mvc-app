@@ -1010,6 +1010,45 @@ export class HomeController {
 
 jsBlade supports template inheritance, allowing you to define a base layout and extend it in child views:
 
+#### Directives
+
+jsBlade provides several directives that you can use in your views:
+
+```html
+@if(condition)
+<!-- Content to render if condition is true -->
+@else
+<!-- Content to render if condition is false -->
+@endif
+
+<!---->
+@ternary(condition ?
+<!--content-->
+:<!--content-->) @foreach(array as item)
+<!-- Content to render for each item in the array -->
+@endforeach
+
+<!-- layout.app.blade.html -->
+@section('content')
+<!-- Content to render in the section -->
+@endsection
+
+<!-- index.blade.html -->
+@extends('layout')
+<!--  -->
+@section('content')
+<!-- Content specific to the index view -->
+@endsection
+<!--  -->
+@auth
+<!-- Content to render for authenticated users -->
+@endauth
+<!--  -->
+@guest
+<!-- Content to render for guests (unauthenticated users) -->
+@endguest
+```
+
 ```html
 <!-- resources/views/layouts/app.blade.html -->
 <!DOCTYPE html>
