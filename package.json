@@ -1,6 +1,6 @@
 {
   "name": "jcc-express-starter",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "bin": "./bin/cli.js",
   "description": "express mvc",
   "main": "index.js",
