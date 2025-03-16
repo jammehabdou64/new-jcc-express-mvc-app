@@ -18,6 +18,7 @@ _A Laravel-inspired MVC framework for Express.js_
 - [Project Structure](#project-structure)
 - [Routing](#routing)
 - [Controllers](#controllers)
+- [Middelwares](#middlewares)
 - [ORM (jcc-eloquent)](#orm-jcc-eloquent)
 - [Validation](#validation)
 - [Form Requests](#form-requests)
@@ -99,7 +100,11 @@ DB_PASSWORD=password
 #### 3. Start the application:
 
 ```bash
+# start vite
+npm run watch
+# start development server
 npm run dev
+
 ```
 
 ## ArtisanNode CLI
@@ -253,7 +258,7 @@ Route.controller(UsersController).group((Route) => {
 });
 ```
 
-## Routes Parameter
+### Routes Parameter
 
 In the `jcc-express-mvc` framework, routes often contain parameters that are dynamic values parsed from the URL path. These parameters are defined using placeholders in the route path and are accessible within route handlers via the `req.params` object.
 Routes parameters can be defined in route paths using placeholders indicated by : or {} followed by the parameter name.
@@ -292,7 +297,7 @@ Methods
 
 ```js
 import { bcrypt, Auth } from "jcc-express-mvc";
-import { Request, Response, Next } from "jcc-express-mvc/http";
+import { Request, Response, Next } from "jcc-express-mvc/core/http";
 import { User } from "@/Model/User";
 export class UsersController {
   //
@@ -333,6 +338,130 @@ export class UsersController {
   }
 }
 ```
+
+## Middlewares
+
+The `Kernel` class in `app/Http/kernel.ts` is responsible for managing middleware in your framework. It consists of two main properties:
+
+- `middleware`: An array of globally registered middleware that runs on every request.
+- `middlewareAliases`: An object that allows middleware to be referenced by a string alias when defining route-specific middleware.
+
+### Global Middleware
+
+The `protected middleware` array contains middleware that will run on every request. Example middleware include:
+
+```js
+// app/Http/kernel.ts
+export class Kernel {
+    protected middleware = [
+        morgan("dev"),
+        cookieParser(),
+        cors(),
+        session({
+            secret: "ggggggg",
+            resave: false,
+            saveUninitialized: false,
+            cookie: { maxAge: 60000 },
+        }),
+        flash(),
+        fileUpload(),
+    ];
+}
+
+```
+
+### Middleware Aliases
+
+Middleware can be referenced by a string alias instead of passing the function directly. This makes route definitions cleaner and easier to read.
+
+Example:
+
+```js
+export class Kernel {
+    protected middleware = [
+        morgan("dev"),
+        cookieParser(),
+        cors(),
+        session({
+            secret: "ggggggg",
+            resave: false,
+            saveUninitialized: false,
+            cookie: { maxAge: 60000 },
+        }),
+        flash(),
+        fileUpload(),
+    ];
+
+     static middlewareAliases = {
+        auth:auth,
+        guest:guest,
+    };
+}
+```
+
+### Creating Custom Middleware
+
+Middleware can be created inside the `app/Http/Middlewares` directory. Each middleware should be exported so it can be used in routes,registered as an alias or as a global middleware.
+
+```js
+// app/Http/Middlewares/AuthMiddleware.ts
+export function AuthMiddleware(req, res, next) {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  next();
+}
+```
+
+You can then import and use this middleware in your Kernel class or directly in routes:
+
+```js
+// in routes
+import { AuthMiddleware } from "@Middleware/AuthMiddleware";
+
+Route.middleware(AuthMiddleware).get("/home", (req, res, next) => {
+  return res.inertia("Home");
+});
+```
+
+or
+
+```js
+import { AuthMiddleware } from "../Http/Middlewares/AuthMiddleware";
+
+export class Kernel {
+  static middlewareAliases = {
+    authMiddleware: AuthMiddleware,
+  };
+}
+//then use it
+Route.middleware(["authMiddleware"]).get("/home", (req, res, next) => {
+  return res.inertia("Home");
+});
+```
+
+### Using an Inline Middleware Function
+
+Middleware can also be defined inline as a function:
+
+```js
+Route.middleware(function (req, res, next) {
+  console.log("Custom middleware executed");
+  next();
+}).get("/", (req, res) => {
+  return res.json({ hello: "Hello" });
+});
+```
+
+### Summary
+
+- Global middleware: Defined in Kernel.middleware and runs on all requests.
+
+- Middleware aliases: Allow shorthand referencing of middleware functions in routes.
+
+- Custom middleware: Can be created in app/Http/Middlewares and exported for use.
+
+- Route-specific middleware: Can be applied as a string (single middleware), an array (multiple middleware), or an inline function.Summary
 
 ## ORM (jcc-eloquent)
 
@@ -440,7 +569,7 @@ class Post extends Model {
 
 ```js
 import { bcrypt, Auth } from "jcc-express-mvc";
-import { Request, Response, Next } from "jcc-express-mvc/http";
+import { Request, Response, Next } from "jcc-express-mvc/core/http";
 import { Post } from "@/Model/Post";
 import { Blueprint } from "jcc-eloquent/QueryBuilder";
 export class PostsController {
@@ -709,13 +838,15 @@ The jcc-express-mvc framework comes with built-in validation rules that enable y
 In web routes, you can use the `req.validate()` method to validate incoming data. Here's an example of how to use it:
 
 ```js
+import { Request, Response, Next } from "jcc-express-mvc/core/http";
+
 class UsersController {
   /**
    *
    *
    * @return Express request response next
    */
-  async store(req, res, next) {
+  async store(req: Request, res: Response, next: Next) {
     const validateData = await req.validate({
       name: ["required"],
       email: ["email", "unique:user"],
@@ -737,7 +868,7 @@ class UsersController {
 For API routes, the `req.apiValidate()` method is used to perform validation. Here's an example:
 
 ```js
-async store(req, res, next) {
+async store(req:Request, res:Response, next:Next) {
   const validateData = await req.apiValidate({
     name: ["required"],
     email: ["email", "unique:user"],
@@ -784,8 +915,8 @@ Custom requests (or Form Requests) are useful in situations when one wants to au
 ### example
 
 ```js
-import { FormRequest } from "jcc-express-mvc/FormRequest";
-import { Request } from "jcc-express-mvc/http";
+import { FormRequest } from "jcc-express-mvc/core/FormRequest";
+import { Request } from "jcc-express-mvc/core/http";
 
 export class UserRequest extends FormRequest {
   constructor(req: Request) {
@@ -899,11 +1030,11 @@ export class Calculator {
 The framework uses reflection to automatically inject dependencies into your classes. Simply define constructor parameters with the correct types:
 
 ```js
-import { Injectable } from "jcc-express-mvc/Dependency";
+import { Inject } from "jcc-express-mvc/lib/Dependancy";
 import { Calculator } from "@/Services/Calculator";
 import { UserService } from "@/Services/UserService";
 
-@Injectable()
+@Inject()
 export class UserController {
   // Dependencies are automatically injected
   constructor(
@@ -994,7 +1125,7 @@ module.exports = (app) => {
 ### Render Views from Controllers
 
 ```js
-import { Request, Response, Next } from "jcc-express-mvc/http";
+import { Request, Response, Next } from "jcc-express-mvc/core/http";
 
 export class HomeController {
   async index(req: Request, res: Response, next: Next) {
@@ -1215,7 +1346,7 @@ createInertiaApp({
 ### Using Inertia in Controllers
 
 ```js
-import { Request, Response, Next } from "jcc-express-mvc/http";
+import { Request, Response, Next } from "jcc-express-mvc/core/http";
 
 export class UserController {
   async index(req: Request, res: Response, next: Next) {
@@ -1418,7 +1549,7 @@ jcc-express-starter provides a set of helper functions to simplify common tasks 
 - **apiAuthenticated**: A function for API JWT authentication. You can i get the user id with req.id
 
 ```javascript
-const { ApiRoute, apiAuth } = require("jcc-express-mvc");
+import { ApiRoute, apiAuth } from "jcc-express-mvc";
 
 // Example usage
 ApiRoute.middleware(apiAuth).post("/api/data", (req, res) => {
@@ -1444,7 +1575,7 @@ The `Str` utility in JCC provides various string manipulation methods inspired b
 Import and use `Str` in your project:
 
 ```ts
-import { Str } from "@jcc/framework";
+import { Str } from "jcc-express-mvc/core/Str";
 
 // Example usage
 console.log(Str.upper("hello")); // "HELLO"

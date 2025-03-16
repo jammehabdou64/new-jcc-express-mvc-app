@@ -39,7 +39,13 @@ const setupProject = async () => {
         type: "list",
         name: "frontend",
         message: "Select your preferred frontend:",
-        choices: ["Inertia + React", "Inertia + Vue", "JSBlade"],
+        choices: [
+          "Inertia + React",
+          "Inertia + React + Typescript",
+          "Inertia + Vue",
+          "Inertia + Vue + Typescript",
+          "JSBlade",
+        ],
       },
     ]);
 
@@ -52,6 +58,13 @@ const setupProject = async () => {
     }
     if (frontend === "Inertia + Vue") {
       repoURL = "https://github.com/jammehabdou64/jcc-express-vue-app";
+    }
+    if (frontend === "Inertia + Vue + Typescript") {
+      repoURL = "https://github.com/jammehabdou64/jcc-express-vue-ts-app";
+    }
+
+    if (frontend === "Inertia + React + Typescript") {
+      repoURL = "https://github.com/jammehabdou64/jcc-express-react-ts-app";
     }
 
     console.log(`\nCloning the repository (${frontend}) into ${repoName}...\n`);
@@ -73,7 +86,8 @@ const setupProject = async () => {
     console.log("\n🎉 Congratulations! Your project is ready.\n");
     console.log(`➡️  cd ${repoName}`);
     console.log("🚀 Start the server with:");
-    console.log("   npm run dev");
+    console.log("npm run watch");
+    console.log(" npm run dev");
   } catch (error) {
     console.log("Sorry, An error occur");
   }
